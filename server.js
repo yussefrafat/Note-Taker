@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const notes = require("./db/db.json");
+const exp = require("constants");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -44,3 +45,18 @@ app.delete("/api/notes/:id", function (req, res) {
 
     rewriteNotes();
 })
+
+// ACESS OF FILES in PUBLIC FOLDER
+
+app.use(express.static("public"));
+
+// ROUTES HTML
+
+app.get("/notes", function (req, res) {
+    res.sendFile(path.join(__dirname, "public/notes.html"));
+});
+
+app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
