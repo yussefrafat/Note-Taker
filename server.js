@@ -5,20 +5,24 @@ const notes = require("./db/db.json");
 const exp = require("constants");
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8012;
 
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-notesID = notes.length;
+currentID = notes.length;
 
 // ROUTES API
 
 app.get("/api/notes", function (req, res) {
-    let newNote = req.body;
+    return res.json(notes);
+});
 
-    newNote["id"] = notesID +1;
-    notesID++;
+app.post("/api/notes", function (req, res) {
+    var newNote = req.body;
+
+    newNote["id"] = currentID +1;
+    currentID++;
     console.log(newNote);
 
     notes.push(newNote);
@@ -60,3 +64,20 @@ app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
+// Listen
+
+app.listen(PORT, function() {
+    console.log("App listening on PORT " + PORT);
+})
+
+// Functions 
+function rewriteNotes() {
+    fs.writeFile("db/db.json", JSON.stringify(notes), function (err) {
+        if (err) {
+            console.log("error")
+            return console.log(err);
+        }
+
+        console.log("Sucess!");
+    });
+}
